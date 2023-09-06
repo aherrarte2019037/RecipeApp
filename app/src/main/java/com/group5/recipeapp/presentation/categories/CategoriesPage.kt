@@ -12,8 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.group5.recipeapp.model.FoodCategoriesEnum
 import com.group5.recipeapp.presentation.components.RoundedButton
 import com.group5.recipeapp.ui.theme.Black
 import com.group5.recipeapp.ui.theme.Blue
@@ -22,9 +23,8 @@ import com.group5.recipeapp.ui.theme.Red
 import com.group5.recipeapp.ui.theme.Typography
 import com.group5.recipeapp.ui.theme.White
 
-@Preview
 @Composable
-fun CategoriesPages() {
+fun CategoriesPages(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,31 +43,44 @@ fun CategoriesPages() {
             Spacer(modifier = Modifier.size(35.dp))
             RoundedButton(
                 bgColor = Red,
-                text = "Breakfast",
+                text = FoodCategoriesEnum.Breakfast.displayableText,
                 displayProgressBar = false,
-                onClick = {}
+                onClick = {
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Breakfast)
+                }
             )
             Spacer(modifier = Modifier.size(20.dp))
             RoundedButton(
                 bgColor = Blue,
-                text = "Lunch",
+                text = FoodCategoriesEnum.Lunch.displayableText,
                 displayProgressBar = false,
-                onClick = {}
+                onClick = {
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Lunch)
+                }
             )
             Spacer(modifier = Modifier.size(20.dp))
             RoundedButton(
                 bgColor = Black,
-                text = "Dinner",
+                text = FoodCategoriesEnum.Dinner.displayableText,
                 displayProgressBar = false,
-                onClick = {}
+                onClick = {
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Dinner)
+                }
             )
             Spacer(modifier = Modifier.size(20.dp))
             RoundedButton(
                 bgColor = LightBlue,
-                text = "Dinner",
+                text = FoodCategoriesEnum.Dessert.displayableText,
                 displayProgressBar = false,
-                onClick = {}
+                onClick = {
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Dessert)
+                }
             )
         }
     }
+}
+
+fun navigateByFoodCategory(navController: NavHostController, foodCategory: FoodCategoriesEnum) {
+    val foodCategoryParam = foodCategory.value
+    navController.navigate("$foodCategoryParam/recipes-list")
 }

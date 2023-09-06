@@ -45,9 +45,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavHostController
 import com.group5.recipeapp.R
 import com.group5.recipeapp.presentation.components.RoundedButton
 import com.group5.recipeapp.presentation.components.TransparentTextField
@@ -56,9 +56,8 @@ import com.group5.recipeapp.ui.theme.Blue
 import com.group5.recipeapp.ui.theme.Red
 import com.group5.recipeapp.ui.theme.Typography
 
-@Preview
 @Composable
-fun LoginPage() {
+fun RegisterPage(navController: NavHostController) {
     val configuration = LocalConfiguration.current
     val heightInDp = configuration.screenHeightDp.dp
 
@@ -177,10 +176,13 @@ fun LoginPage() {
                                 ),
                                 displayProgressBar = false,
                                 onClick = {
-                                    // TODO("REGISTER")
+                                    navController.navigate("categories")
                                 }
                             )
                             ClickableText(
+                                onClick = {
+                                    navController.navigate("login")
+                                },
                                 text = buildAnnotatedString {
                                     append("Do you have an Account?")
 
@@ -192,13 +194,15 @@ fun LoginPage() {
                                     ) {
                                         append(" Sign in")
                                     }
-                                }
-                            ) {}
+                                },
+                            )
                         }
                     }
                 }
                 FloatingActionButton(
-                    onClick = {},
+                    onClick = {
+                        navController.navigate("categories")
+                    },
                     modifier = Modifier
                         .size(75.dp)
                         .constrainAs(fab) {
