@@ -14,9 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import com.group5.recipeapp.model.FoodCategoriesEnum
 import com.group5.recipeapp.presentation.categories.CategoriesPages
 import com.group5.recipeapp.presentation.login.LoginPage
-import com.group5.recipeapp.presentation.recipes.RecipesList
 import com.group5.recipeapp.presentation.register.RegisterPage
 import com.group5.recipeapp.ui.theme.RecipeAppTheme
+import com.group5.recipeapp.presentation.recipes.RecipesList
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
