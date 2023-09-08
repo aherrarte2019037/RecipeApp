@@ -46,7 +46,7 @@ fun CategoriesPages(navController: NavHostController) {
                 text = FoodCategoriesEnum.Breakfast.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateByFoodCategory(navController, FoodCategoriesEnum.Breakfast)
+                    navigateToRecipe(navController)
                 }
             )
             Spacer(modifier = Modifier.size(20.dp))
@@ -55,7 +55,7 @@ fun CategoriesPages(navController: NavHostController) {
                 text = FoodCategoriesEnum.Lunch.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateByFoodCategory(navController, FoodCategoriesEnum.Lunch)
+                    navigateToRecipe(navController)
                 }
             )
             Spacer(modifier = Modifier.size(20.dp))
@@ -64,7 +64,7 @@ fun CategoriesPages(navController: NavHostController) {
                 text = FoodCategoriesEnum.Dinner.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateByFoodCategory(navController, FoodCategoriesEnum.Dinner)
+                    navigateToRecipe(navController)
                 }
             )
             Spacer(modifier = Modifier.size(20.dp))
@@ -73,7 +73,7 @@ fun CategoriesPages(navController: NavHostController) {
                 text = FoodCategoriesEnum.Dessert.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateByFoodCategory(navController, FoodCategoriesEnum.Dessert)
+                    navigateToRecipe(navController)
                 }
             )
         }
@@ -83,4 +83,9 @@ fun CategoriesPages(navController: NavHostController) {
 fun navigateByFoodCategory(navController: NavHostController, foodCategory: FoodCategoriesEnum) {
     val foodCategoryParam = foodCategory.value
     navController.navigate("$foodCategoryParam/recipes-list")
+}
+
+fun navigateToRecipe(navController: NavHostController) {
+    val mockId = "mockId"
+    navController.navigate("recipe/${mockId}")
 }
