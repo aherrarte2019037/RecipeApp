@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
@@ -53,10 +54,16 @@ import com.group5.recipeapp.presentation.components.RoundedButton
 import com.group5.recipeapp.presentation.components.TransparentTextField
 import com.group5.recipeapp.ui.theme.Black
 import com.group5.recipeapp.ui.theme.Blue
+import com.group5.recipeapp.ui.theme.Red
 import com.group5.recipeapp.ui.theme.Typography
+import com.radusalagean.infobarcompose.InfoBar
+import com.radusalagean.infobarcompose.InfoBarMessage
 
 @Composable
-fun LoginPage(navController: NavHostController) {
+fun LoginPage(
+    navController: NavHostController,
+    viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
     val configuration = LocalConfiguration.current
     val heightInDp = configuration.screenHeightDp.dp
 
@@ -64,6 +71,20 @@ fun LoginPage(navController: NavHostController) {
     val passwordValue = rememberSaveable { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+
+    var snackbarMessage: InfoBarMessage? by remember { mutableStateOf(null) }
+
+    fun login() = run {
+        viewModel.signInWithEmailAndPassword(
+            emailValue.value,
+            passwordValue.value,
+            home = {
+                navController.navigate("categories")
+            },
+            onError = { message ->
+                snackbarMessage = InfoBarMessage(text = message)
+            })
+    }
 
     Box(
         modifier = Modifier
@@ -136,7 +157,7 @@ fun LoginPage(navController: NavHostController) {
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     focusManager.clearFocus()
-                                    //TODO("LOGIN")
+                                    login()
                                 }
                             ),
                             imeAction = ImeAction.Done,
@@ -174,7 +195,7 @@ fun LoginPage(navController: NavHostController) {
                                 ),
                                 displayProgressBar = false,
                                 onClick = {
-                                    navController.navigate("categories")
+                                    login()
                                 }
                             )
                             ClickableText(
@@ -199,7 +220,7 @@ fun LoginPage(navController: NavHostController) {
                 }
                 FloatingActionButton(
                     onClick = {
-                              navController.navigate("categories")
+                        login()
                     },
                     modifier = Modifier
                         .size(75.dp)
@@ -218,6 +239,9 @@ fun LoginPage(navController: NavHostController) {
                     )
                 }
             }
+        }
+        InfoBar(offeredMessage = snackbarMessage, shape = RectangleShape, backgroundColor = Red) {
+            snackbarMessage = null
         }
     }
 }
