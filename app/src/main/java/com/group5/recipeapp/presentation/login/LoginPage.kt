@@ -1,9 +1,13 @@
 package com.group5.recipeapp.presentation.login
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -49,6 +54,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.group5.recipeapp.R
 import com.group5.recipeapp.presentation.components.RoundedButton
 import com.group5.recipeapp.presentation.components.TransparentTextField
@@ -74,6 +83,29 @@ fun LoginPage(
 
     var snackbarMessage: InfoBarMessage? by remember { mutableStateOf(null) }
 
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
+            viewModel.signInWithGoogle(
+                credentials = credentials,
+                home = {
+                    navController.navigate("categories")
+                },
+                onError = { message ->
+                    snackbarMessage = InfoBarMessage(text = message)
+                }
+            )
+        } catch (e: Exception) {
+            snackbarMessage = InfoBarMessage(text = "Login failed")
+        }
+    }
+
     fun login() = run {
         viewModel.signInWithEmailAndPassword(
             emailValue.value,
@@ -84,6 +116,18 @@ fun LoginPage(
             onError = { message ->
                 snackbarMessage = InfoBarMessage(text = message)
             })
+    }
+
+    fun loginWithGoogle() = run {
+        val options = GoogleSignInOptions.Builder(
+            GoogleSignInOptions.DEFAULT_SIGN_IN
+        )
+            .requestIdToken("268075207641-9i2n01af59k89cp2h1tm22n6ukpo77pu.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        val signInClient = GoogleSignIn.getClient(context, options)
+        launcher.launch(signInClient.signInIntent)
     }
 
     Box(
@@ -188,16 +232,34 @@ fun LoginPage(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            RoundedButton(
-                                text = "Login",
-                                modifier = Modifier.padding(
-                                    top = 16.dp
-                                ),
-                                displayProgressBar = false,
-                                onClick = {
-                                    login()
+                            Row(
+                                Modifier
+                                    .padding(top = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                RoundedButton(
+                                    text = "Login",
+                                    displayProgressBar = false,
+                                    onClick = {
+                                        login()
+                                    }
+                                )
+                                IconButton(
+                                    onClick = {
+                                        loginWithGoogle()
+                                    },
+                                    Modifier
+                                        .background(color = Blue, shape = CircleShape)
+                                        .size(50.dp)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.google_icon),
+                                        contentDescription = "Google",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(25.dp)
+                                    )
                                 }
-                            )
+                            }
                             ClickableText(
                                 onClick = {
                                     navController.navigate("register")
