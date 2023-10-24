@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.group5.recipeapp.model.Recipe
 import com.group5.recipeapp.presentation.categories.CategoriesPages
 import com.group5.recipeapp.presentation.login.LoginPage
@@ -38,9 +39,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationHandler() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login") {
+    var startDestination = "login"
+
+    if (FirebaseAuth.getInstance().currentUser?.email != null) {
+        startDestination = "categories"
+    }
+
+    NavHost(navController = navController, startDestination) {
         composable("login") {
-            LoginPage(navController)
+                LoginPage(navController)
         }
         composable("register") {
             RegisterPage(navController)

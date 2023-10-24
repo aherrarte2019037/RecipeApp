@@ -8,11 +8,12 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.group5.recipeapp.io.FirestoreRepository
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
-    private val _loading = MutableLiveData(false)
+    private val firestoreRepository: FirestoreRepository = FirestoreRepository()
 
     fun signInWithEmailAndPassword(
         email: String,
@@ -27,7 +28,11 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 auth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener {
+                    .addOnSuccessListener { result ->
+                        val id = result.user?.uid
+                        if (id != null) {
+                            firestoreRepository.saveUserFromLogin(id, email)
+                        }
                         home()
                     }
                     .addOnFailureListener { ex ->
@@ -47,7 +52,13 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 auth.signInWithCredential(credentials)
-                    .addOnSuccessListener {
+                    .addOnSuccessListener { result ->
+                        val id = result.user?.uid
+                        val email = result.user?.email
+
+                    if (id != null && email != null) {
+                            firestoreRepository.saveUserFromLogin(id, email)
+                        }
                         home()
                     }
                     .addOnFailureListener { ex ->

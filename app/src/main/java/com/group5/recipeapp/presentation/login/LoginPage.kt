@@ -95,7 +95,9 @@ fun LoginPage(
             viewModel.signInWithGoogle(
                 credentials = credentials,
                 home = {
-                    navController.navigate("categories")
+                    navController.navigate("categories") {
+                        popUpTo(0)
+                    }
                 },
                 onError = { message ->
                     snackbarMessage = InfoBarMessage(text = message)
@@ -111,7 +113,9 @@ fun LoginPage(
             emailValue.value,
             passwordValue.value,
             home = {
-                navController.navigate("categories")
+                navController.navigate("categories") {
+                    popUpTo(0)
+                }
             },
             onError = { message ->
                 snackbarMessage = InfoBarMessage(text = message)
