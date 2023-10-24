@@ -1,7 +1,6 @@
 package com.group5.recipeapp.presentation.login
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
@@ -30,8 +29,14 @@ class LoginViewModel : ViewModel() {
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener { result ->
                         val id = result.user?.uid
+
                         if (id != null) {
-                            firestoreRepository.saveUserFromLogin(id, email)
+                            firestoreRepository.getUserByEmail(email)
+                                .addOnSuccessListener { documents ->
+                                    if (documents.isEmpty) {
+                                        firestoreRepository.saveUserFromLogin(id, email)
+                                    }
+                                }
                         }
                         home()
                     }
@@ -56,8 +61,13 @@ class LoginViewModel : ViewModel() {
                         val id = result.user?.uid
                         val email = result.user?.email
 
-                    if (id != null && email != null) {
-                            firestoreRepository.saveUserFromLogin(id, email)
+                        if (id != null && email != null) {
+                            firestoreRepository.getUserByEmail(email)
+                                .addOnSuccessListener { documents ->
+                                    if (documents.isEmpty) {
+                                        firestoreRepository.saveUserFromLogin(id, email)
+                                    }
+                                }
                         }
                         home()
                     }

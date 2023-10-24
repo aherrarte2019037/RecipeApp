@@ -1,12 +1,12 @@
 package com.group5.recipeapp.model
 
 data class User(
-    val id: String?,
+    val userId: String?,
     val email: String
 ) {
     fun toMap(): MutableMap<String, Any?> {
         return mutableMapOf(
-            "id" to this.id,
+            "userId" to this.userId,
             "email" to this.email,
         )
     }

@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
@@ -55,9 +56,14 @@ import com.group5.recipeapp.ui.theme.Black
 import com.group5.recipeapp.ui.theme.Blue
 import com.group5.recipeapp.ui.theme.Red
 import com.group5.recipeapp.ui.theme.Typography
+import com.radusalagean.infobarcompose.InfoBar
+import com.radusalagean.infobarcompose.InfoBarMessage
 
 @Composable
-fun RegisterPage(navController: NavHostController) {
+fun RegisterPage(
+    navController: NavHostController,
+    viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
     val configuration = LocalConfiguration.current
     val heightInDp = configuration.screenHeightDp.dp
 
@@ -65,6 +71,22 @@ fun RegisterPage(navController: NavHostController) {
     val passwordValue = rememberSaveable { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+
+    var snackbarMessage: InfoBarMessage? by remember { mutableStateOf(null) }
+
+    fun register() = run {
+        viewModel.signUp(
+            emailValue.value,
+            passwordValue.value,
+            home = {
+                navController.navigate("categories") {
+                    popUpTo(0)
+                }
+            },
+            onError = { message ->
+                snackbarMessage = InfoBarMessage(text = message)
+            })
+    }
 
     Box(
         modifier = Modifier
@@ -137,7 +159,7 @@ fun RegisterPage(navController: NavHostController) {
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     focusManager.clearFocus()
-                                    //TODO("LOGIN")
+                                    register()
                                 }
                             ),
                             imeAction = ImeAction.Done,
@@ -176,7 +198,7 @@ fun RegisterPage(navController: NavHostController) {
                                 ),
                                 displayProgressBar = false,
                                 onClick = {
-                                    navController.navigate("categories")
+                                    register()
                                 }
                             )
                             ClickableText(
@@ -201,7 +223,7 @@ fun RegisterPage(navController: NavHostController) {
                 }
                 FloatingActionButton(
                     onClick = {
-                        navController.navigate("categories")
+                        register()
                     },
                     modifier = Modifier
                         .size(75.dp)
@@ -220,6 +242,9 @@ fun RegisterPage(navController: NavHostController) {
                     )
                 }
             }
+        }
+        InfoBar(offeredMessage = snackbarMessage, shape = RectangleShape) {
+            snackbarMessage = null
         }
     }
 }
