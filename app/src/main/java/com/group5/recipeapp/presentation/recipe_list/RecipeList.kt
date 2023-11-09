@@ -15,11 +15,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +38,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.group5.recipeapp.model.PreviewRecipe
 import com.group5.recipeapp.ui.theme.Typography
 import com.group5.recipeapp.ui.theme.White
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RecipeList(
@@ -38,8 +46,11 @@ fun RecipeList(
     category: String,
     viewModel: RecipeListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    viewModel.fetchRecipes(category)
-    val recipes = viewModel.recipes.collectAsState().value
+    val recipes by viewModel.recipes.collectAsState()
+    val listState = rememberLazyListState()
+    LaunchedEffect(category) {
+        viewModel.fetchRecipes(category)
+    }
 
     Box(
         modifier = Modifier
@@ -57,19 +68,32 @@ fun RecipeList(
                 modifier = Modifier.padding(top = 30.dp, bottom = 5.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            RecipeListView(recipes) { recipeId ->
+            RecipeListView(recipes, listState, onRecipeClicked = { recipeId ->
                 navigateToRecipe(navController, recipeId)
-            }
+            }, viewModel)
         }
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collectLatest { lastIndex ->
+                if (lastIndex != null && lastIndex >= recipes.size - 1) {
+                    // Load more items
+                    viewModel.fetchRecipes(category, true)
+                }
+            }
     }
 }
 
 @Composable
 fun RecipeListView(
     recipes: List<PreviewRecipe>,
-    onRecipeClicked: (Int) -> Unit
+    listState: LazyListState,
+    onRecipeClicked: (Int) -> Unit,
+    viewModel: RecipeListViewModel
 ) {
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .background(White)
@@ -77,6 +101,15 @@ fun RecipeListView(
         items(recipes) { recipe ->
             RecipeListItem(recipe, onRecipeClicked)
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Add a loading item at the end of the list if more items are being fetched
+        item {
+            if (viewModel.isLoading) {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator() // Show loading spinner
+                }
+            }
         }
     }
 }

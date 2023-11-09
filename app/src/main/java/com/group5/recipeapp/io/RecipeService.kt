@@ -8,6 +8,8 @@ interface RecipeService {
     @GET("recipes/complexSearch")
     suspend fun searchRecipes(
         @Query("query") query: String,
+        @Query("number") number: Number,
+        @Query("offset") offset: Number,
         @Query("apiKey") apiKey: String = "92e0bbf6019f4769818922a0a01d7277"
     ): RecipeSearchResponse
 }
