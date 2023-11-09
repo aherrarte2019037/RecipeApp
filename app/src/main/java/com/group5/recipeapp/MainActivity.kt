@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.group5.recipeapp.model.Recipe
 import com.group5.recipeapp.presentation.categories.CategoriesPages
 import com.group5.recipeapp.presentation.login.LoginPage
+import com.group5.recipeapp.presentation.recipe_list.RecipeList
 import com.group5.recipeapp.presentation.recipes.RecipePage
 import com.group5.recipeapp.presentation.register.RegisterPage
 import com.group5.recipeapp.ui.theme.RecipeAppTheme
@@ -54,6 +55,10 @@ fun NavigationHandler() {
         }
         composable("categories") {
             CategoriesPages(navController)
+        }
+        composable("recipe-list/{category}") { navBackStackEntry ->
+            val category = navBackStackEntry.arguments?.getString("category") ?: ""
+            RecipeList(navController = navController, category = category)
         }
         composable("recipe/{id}") { navBackStackEntry ->
             val recipeId = navBackStackEntry.arguments?.getString("id") ?: ""

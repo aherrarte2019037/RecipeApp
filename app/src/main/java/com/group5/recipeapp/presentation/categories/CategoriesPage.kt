@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.group5.recipeapp.model.FoodCategoriesEnum
 import com.group5.recipeapp.presentation.components.RoundedButton
-import com.group5.recipeapp.presentation.login.LoginViewModel
 import com.group5.recipeapp.ui.theme.Black
 import com.group5.recipeapp.ui.theme.Blue
 import com.group5.recipeapp.ui.theme.LightBlue
@@ -52,7 +51,7 @@ fun CategoriesPages(
                 text = FoodCategoriesEnum.Breakfast.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateToRecipe(navController)
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Breakfast)
                 }
             )
             Spacer(modifier = Modifier.size(20.dp))
@@ -61,7 +60,7 @@ fun CategoriesPages(
                 text = FoodCategoriesEnum.Lunch.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateToRecipe(navController)
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Lunch)
                 }
             )
             Spacer(modifier = Modifier.size(20.dp))
@@ -70,7 +69,7 @@ fun CategoriesPages(
                 text = FoodCategoriesEnum.Dinner.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateToRecipe(navController)
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Dinner)
                 }
             )
             Spacer(modifier = Modifier.size(20.dp))
@@ -79,7 +78,7 @@ fun CategoriesPages(
                 text = FoodCategoriesEnum.Dessert.displayableText,
                 displayProgressBar = false,
                 onClick = {
-                    navigateToRecipe(navController)
+                    navigateByFoodCategory(navController, FoodCategoriesEnum.Dessert)
                 }
             )
             Spacer(modifier = Modifier.size(100.dp))
@@ -103,10 +102,5 @@ fun CategoriesPages(
 
 fun navigateByFoodCategory(navController: NavHostController, foodCategory: FoodCategoriesEnum) {
     val foodCategoryParam = foodCategory.value
-    navController.navigate("$foodCategoryParam/recipes-list")
-}
-
-fun navigateToRecipe(navController: NavHostController) {
-    val mockId = "mockId"
-    navController.navigate("recipe/${mockId}")
+    navController.navigate("recipe-list/$foodCategoryParam")
 }

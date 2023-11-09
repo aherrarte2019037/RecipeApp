@@ -7,3 +7,10 @@ data class Recipe(
     val preparationSteps: List<String>,
     val ingredients: List<String>
 )
+
+data class PreviewRecipe(
+    val id: Int,
+    val title: String,
+    val image: String,
+    val imageType: String
+)
