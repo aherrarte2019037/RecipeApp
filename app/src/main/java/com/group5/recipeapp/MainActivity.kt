@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.group5.recipeapp.model.Recipe
 import com.group5.recipeapp.presentation.categories.CategoriesPages
 import com.group5.recipeapp.presentation.login.LoginPage
 import com.group5.recipeapp.presentation.recipe_list.RecipeList
@@ -62,23 +61,7 @@ fun NavigationHandler() {
         }
         composable("recipe/{id}") { navBackStackEntry ->
             val recipeId = navBackStackEntry.arguments?.getString("id") ?: ""
-            val mockRecipe = Recipe(
-                id = recipeId,
-                name = "Galletas con chispas de chocolate",
-                imageResourceId = R.drawable.food_bg, // Reemplaza con una referencia válida a una imagen
-                preparationSteps = listOf(
-                    "Precalienta el horno a 180°C.",
-                    "En un tazón grande, mezcla la harina, el azúcar y el polvo de hornear.",
-                    // ... (agrega los otros pasos aquí)
-                ),
-                ingredients = listOf(
-                    "2 tazas de harina para todo uso",
-                    "1 taza de azúcar",
-                    // ... (agrega los otros ingredientes aquí)
-                )
-            )
-
-            RecipePage(navController, mockRecipe)
+            RecipePage(navController, recipeId.toInt())
         }
     }
 }

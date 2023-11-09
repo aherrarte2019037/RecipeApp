@@ -1,10 +1,8 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.group5.recipeapp.presentation.recipes
 
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,95 +11,136 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.LocalDining
-import androidx.compose.material3.Icon
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.group5.recipeapp.R
-import com.group5.recipeapp.model.Recipe
-import com.group5.recipeapp.ui.theme.Black
+import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import com.group5.recipeapp.model.Ingredient
 import com.group5.recipeapp.ui.theme.Typography
 
 @Composable
 fun RecipePage(
     navController: NavHostController,
-    recipe: Recipe,
-) {
-    val titleStyle = Typography.titleMedium
-    val bodyStyle = Typography.bodySmall
+    recipeId: Int,
+    viewModel: RecipesViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+)  {
+    viewModel.fetchRecipeById(recipeId)
+    val scrollState = rememberScrollState()
+    val recipeDetails by viewModel.recipeDetails.collectAsState()
 
     Column(
         modifier = Modifier
+            .verticalScroll(scrollState)
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Sección de la foto de la receta
-        RecipeImage(imageResource = R.drawable.food_bg)
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        // Sección de los pasos de preparación
-        SectionTitle(title = "Pasos de preparación", style = titleStyle, icon = Icons.Default.List)
-
-        recipe.preparationSteps.forEachIndexed { index, step ->
-            Row(
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier.padding(bottom = 8.dp, start = 16.dp)
-            ) {
-                Text(text = "${index + 1}.", style = bodyStyle, modifier = Modifier.width(28.dp))
-                Text(text = step, style = bodyStyle)
+        recipeDetails?.let { details ->
+            RecipeImage(imageUrl = details.image)
+            RecipeTitle(title = details.title)
+            CookingInfo(
+                servings = details.servings,
+                readyInMinutes = details.readyInMinutes,
+                healthScore = details.healthScore,
+                spoonacularScore = details.spoonacularScore
+            )
+            details.ingredients?.let { IngredientsList(ingredients = it) }
+            details.instructions?.let { Instructions(instructions = it) }
+            details.sourceUrl?.let {
+                AdditionalDetails(
+                    sourceUrl = it,
+                )
             }
-        }
 
-        Spacer(modifier = Modifier.height(15.dp))
-
-        // Sección de los ingredientes
-        SectionTitle(title = "Ingredientes", style = titleStyle, icon = Icons.Default.LocalDining)
-
-        recipe.ingredients.forEach { ingredient ->
-            Row(
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier.padding(bottom = 8.dp, start = 16.dp)
-            ) {
-                Text(text = "•", style = bodyStyle.copy(fontWeight = FontWeight.Bold), modifier = Modifier.width(28.dp))
-                Text(text = ingredient, style = bodyStyle)
-            }
+        } ?: run {
+            CircularProgressIndicator()
         }
     }
 }
 
 @Composable
-fun RecipeImage(imageResource: Int) {
+fun RecipeImage(imageUrl: String) {
     Image(
-        painter = painterResource(id = imageResource),
+        painter = rememberAsyncImagePainter(imageUrl),
         contentDescription = "Recipe Image",
         modifier = Modifier
+            .height(240.dp)
             .fillMaxWidth()
-            .height(200.dp)
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(Black.copy(alpha = 0.2f)),
+            .clip(RoundedCornerShape(8.dp)),
         contentScale = ContentScale.Crop
     )
 }
 
 @Composable
-fun SectionTitle(title: String, style: TextStyle, icon: ImageVector) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(bottom = 8.dp)
-    ) {
-        Icon(imageVector = icon, contentDescription = null)
+fun RecipeTitle(title: String) {
+    Text(
+        text = title,
+        style = Typography.titleLarge.copy(
+            fontWeight = FontWeight.SemiBold,
+        ),
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Composable
+fun CookingInfo(
+    servings: Int?,
+    readyInMinutes: Int?,
+    healthScore: Float?,
+    spoonacularScore: Float?
+) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        LabelWithBorder(label = "Servings", content = servings?.toString() ?: "No info available")
+        LabelWithBorder(label = "Ready in", content = readyInMinutes?.toString()?.plus(" minutes") ?: "No info available")
+        LabelWithBorder(label = "Health Score", content = healthScore?.toString() ?: "No info available")
+        LabelWithBorder(label = "Spoonacular Score", content = spoonacularScore?.toString() ?: "No info available")
+    }
+}
+
+@Composable
+fun LabelWithBorder(label: String, content: String) {
+    Row(modifier = Modifier.padding(vertical = 4.dp)) {
+        Text(text = label, style = Typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = title, style = style)
+        Text(text = content, style = Typography.bodyMedium.copy(fontWeight = FontWeight.Normal))
+    }
+}
+
+@Composable
+fun IngredientsList(ingredients: List<Ingredient>) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text("Ingredients", style = Typography.bodyLarge.copy(
+            fontWeight = FontWeight.SemiBold,
+        ))
+        ingredients.forEach { ingredient ->
+            Text("${ingredient.amount} ${ingredient.unit} of ${ingredient.name}")
+        }
+    }
+}
+
+@Composable
+fun Instructions(instructions: String) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text("Instructions", style = Typography.bodyLarge.copy(
+            fontWeight = FontWeight.SemiBold,
+        ))
+        Text(instructions)
+    }
+}
+
+@Composable
+fun AdditionalDetails(sourceUrl: String) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text("Source: $sourceUrl")
     }
 }
