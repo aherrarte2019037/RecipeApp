@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.group5.recipeapp.io.LocalStorageService
 import com.group5.recipeapp.presentation.categories.CategoriesPages
 import com.group5.recipeapp.presentation.login.LoginPage
 import com.group5.recipeapp.presentation.recipe_list.RecipeList
@@ -22,14 +23,15 @@ import com.group5.recipeapp.ui.theme.RecipeAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val localStorageService = LocalStorageService(this)
+
         setContent {
             RecipeAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationHandler()
+                    NavigationHandler(localStorageService)
                 }
             }
         }
@@ -37,12 +39,15 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun NavigationHandler() {
+fun NavigationHandler(localStorageService: LocalStorageService) {
     val navController = rememberNavController()
     var startDestination = "login"
+    val rememberSession = localStorageService.getBool("remember_session", false)
 
-    if (FirebaseAuth.getInstance().currentUser?.email != null) {
+    if (rememberSession && FirebaseAuth.getInstance().currentUser?.email != null) {
         startDestination = "categories"
+    } else {
+        FirebaseAuth.getInstance().signOut()
     }
 
     NavHost(navController = navController, startDestination) {

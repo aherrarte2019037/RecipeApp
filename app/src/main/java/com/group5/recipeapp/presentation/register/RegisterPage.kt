@@ -110,7 +110,7 @@ fun RegisterPage(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp)
+                        .height(450.dp)
                         .constrainAs(surface) {
                             bottom.linkTo(parent.bottom)
                         },

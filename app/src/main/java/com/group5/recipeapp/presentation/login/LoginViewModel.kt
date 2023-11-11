@@ -1,22 +1,26 @@
 package com.group5.recipeapp.presentation.login
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.group5.recipeapp.io.FirestoreRepository
+import com.group5.recipeapp.io.LocalStorageService
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val auth: FirebaseAuth = Firebase.auth
     private val firestoreRepository: FirestoreRepository = FirestoreRepository()
+    private val localStorageService = LocalStorageService(application)
 
     fun signInWithEmailAndPassword(
         email: String,
         password: String,
+        rememberMe: Boolean,
         home: () -> Unit,
         onError: (message: String) -> Unit
     ) {
@@ -38,6 +42,7 @@ class LoginViewModel : ViewModel() {
                                     }
                                 }
                         }
+                        localStorageService.saveBool("remember_session", rememberMe)
                         home()
                     }
                     .addOnFailureListener { ex ->

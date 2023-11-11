@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +53,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -59,6 +61,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.group5.recipeapp.R
+import com.group5.recipeapp.presentation.components.CircularCheckbox
 import com.group5.recipeapp.presentation.components.RoundedButton
 import com.group5.recipeapp.presentation.components.TransparentTextField
 import com.group5.recipeapp.ui.theme.Black
@@ -79,6 +82,7 @@ fun LoginPage(
     val emailValue = rememberSaveable { mutableStateOf("") }
     val passwordValue = rememberSaveable { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
+    val rememberMe = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     var snackbarMessage: InfoBarMessage? by remember { mutableStateOf(null) }
@@ -112,6 +116,7 @@ fun LoginPage(
         viewModel.signInWithEmailAndPassword(
             emailValue.value,
             passwordValue.value,
+            rememberMe = rememberMe.value,
             home = {
                 navController.navigate("categories") {
                     popUpTo(0)
@@ -156,7 +161,7 @@ fun LoginPage(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp)
+                        .height(450.dp)
                         .constrainAs(surface) {
                             bottom.linkTo(parent.bottom)
                         },
@@ -231,6 +236,22 @@ fun LoginPage(
                                 PasswordVisualTransformation()
                             }
                         )
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 24.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            CircularCheckbox(
+                                checked = rememberMe.value,
+                                onCheckedChange = { isChecked -> rememberMe.value = isChecked }
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                "Remember",
+                                fontSize = 15.sp,
+                            )
+                        }
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
