@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.group5.recipeapp.io.LocalStorageService
 import com.group5.recipeapp.presentation.categories.CategoriesPages
 import com.group5.recipeapp.presentation.login.LoginPage
+import com.group5.recipeapp.presentation.profile.ProfilePage
 import com.group5.recipeapp.presentation.recipe_list.RecipeList
 import com.group5.recipeapp.presentation.recipes.RecipePage
 import com.group5.recipeapp.presentation.register.RegisterPage
@@ -59,6 +60,9 @@ fun NavigationHandler(localStorageService: LocalStorageService) {
         }
         composable("categories") {
             CategoriesPages(navController)
+        }
+        composable("profile") {
+            ProfilePage(navController)
         }
         composable("recipe-list/{category}") { navBackStackEntry ->
             val category = navBackStackEntry.arguments?.getString("category") ?: ""

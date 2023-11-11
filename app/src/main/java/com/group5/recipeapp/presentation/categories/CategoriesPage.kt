@@ -1,21 +1,32 @@
 package com.group5.recipeapp.presentation.categories
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.group5.recipeapp.R
 import com.group5.recipeapp.model.FoodCategoriesEnum
 import com.group5.recipeapp.presentation.components.RoundedButton
 import com.group5.recipeapp.ui.theme.Black
@@ -82,23 +93,36 @@ fun CategoriesPages(
                 }
             )
             Spacer(modifier = Modifier.size(100.dp))
-            RoundedButton(
-                bgColor = Color.Unspecified,
-                text = "Sign out",
-                textColor = Black,
-                textSize = 18.sp,
-                displayProgressBar = false,
-                onClick = {
-                    viewModel.signOut {
-                        navController.navigate("login") {
-                            popUpTo(0)
-                        }
-                    }
-                }
-            )
+            ProfileAvatarWithButton(navController)
         }
     }
 }
+
+@Composable
+fun ProfileAvatarWithButton(navController: NavController) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .clickable {
+                navController.navigate("profile")
+            }
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.profile_avatar),
+            contentDescription = "Profile Avatar",
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            "My Profile",
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
+
 
 fun navigateByFoodCategory(navController: NavHostController, foodCategory: FoodCategoriesEnum) {
     val foodCategoryParam = foodCategory.value

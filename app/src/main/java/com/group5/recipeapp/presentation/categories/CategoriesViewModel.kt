@@ -5,14 +5,4 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-class CategoriesViewModel: ViewModel() {
-    fun signOut(login: () -> Unit) {
-        viewModelScope.launch {
-            try {
-                FirebaseAuth.getInstance().signOut()
-                login()
-
-            } catch (_: Exception) {}
-        }
-    }
-}
+class CategoriesViewModel: ViewModel()
