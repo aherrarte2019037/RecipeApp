@@ -28,6 +28,7 @@ fun RoundedButton(
     bgColor: Color = Blue,
     onClick: () -> Unit,
 ) {
+    // Check if a progress bar should be displayed
     if(!displayProgressBar) {
         Button(
             modifier = modifier.width(280.dp).height(50.dp),
@@ -35,6 +36,7 @@ fun RoundedButton(
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(containerColor = bgColor)
         ) {
+            // Display text inside the button with specified style
             Text(
                 text = text,
                 style = Typography.labelLarge.copy(
@@ -44,6 +46,7 @@ fun RoundedButton(
             )
         }
     } else {
+        // Display a circular progress indicator if displayProgressBar is true
         CircularProgressIndicator(
             modifier = Modifier.size(50.dp),
             color = Blue,

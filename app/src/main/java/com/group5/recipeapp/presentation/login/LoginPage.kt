@@ -79,23 +79,28 @@ fun LoginPage(
     val configuration = LocalConfiguration.current
     val heightInDp = configuration.screenHeightDp.dp
 
+    // Mutable state variables to hold email, password, visibility, and rememberMe state
     val emailValue = rememberSaveable { mutableStateOf("") }
     val passwordValue = rememberSaveable { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
     val rememberMe = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
+    // Mutable state variable to hold snackbar message
     var snackbarMessage: InfoBarMessage? by remember { mutableStateOf(null) }
 
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) {
+        // Handle the result of the Google Sign-In intent
         val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
 
         try {
             val account = task.getResult(ApiException::class.java)
             val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
+
+            // Sign in with Google using the obtained credentials
             viewModel.signInWithGoogle(
                 credentials = credentials,
                 home = {
@@ -112,6 +117,7 @@ fun LoginPage(
         }
     }
 
+    // Function to perform email/password login
     fun login() = run {
         viewModel.signInWithEmailAndPassword(
             emailValue.value,
@@ -127,6 +133,7 @@ fun LoginPage(
             })
     }
 
+    // Function to initiate Google Sign-In
     fun loginWithGoogle() = run {
         val options = GoogleSignInOptions.Builder(
             GoogleSignInOptions.DEFAULT_SIGN_IN
@@ -139,6 +146,7 @@ fun LoginPage(
         launcher.launch(signInClient.signInIntent)
     }
 
+    // Main layout for the login page
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -151,6 +159,7 @@ fun LoginPage(
                 .fillMaxWidth()
                 .height(heightInDp - 370.dp)
         )
+        // Container for the login UI
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
@@ -327,6 +336,7 @@ fun LoginPage(
                 }
             }
         }
+        // InfoBar to display snackbar messages
         InfoBar(offeredMessage = snackbarMessage, shape = RectangleShape, backgroundColor = Red) {
             snackbarMessage = null
         }

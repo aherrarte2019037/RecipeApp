@@ -74,6 +74,7 @@ fun RegisterPage(
 
     var snackbarMessage: InfoBarMessage? by remember { mutableStateOf(null) }
 
+    // Function to perform user registration
     fun register() = run {
         viewModel.signUp(
             emailValue.value,

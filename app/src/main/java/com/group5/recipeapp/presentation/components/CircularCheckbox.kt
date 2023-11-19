@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
+// Custom composable for a circular checkbox
 @Composable
 fun CircularCheckbox(
     modifier: Modifier = Modifier,
@@ -36,6 +37,7 @@ fun CircularCheckbox(
             .clickable { onCheckedChange(!checked) },
         contentAlignment = Alignment.Center
     ) {
+        // Display a check icon if the checkbox is checked
         if (checked) {
             Icon(
                 imageVector = Icons.Default.Check,

@@ -46,12 +46,14 @@ fun RecipeList(
     category: String,
     viewModel: RecipeListViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    // Collect the recipes from the view model
     val recipes by viewModel.recipes.collectAsState()
     val listState = rememberLazyListState()
     LaunchedEffect(category) {
         viewModel.fetchRecipes(category)
     }
 
+    // Main container for the RecipeList screen
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -85,6 +87,7 @@ fun RecipeList(
     }
 }
 
+// Function for displaying the list of recipes
 @Composable
 fun RecipeListView(
     recipes: List<PreviewRecipe>,
@@ -114,6 +117,7 @@ fun RecipeListView(
     }
 }
 
+// Function for displaying an individual recipe item
 @Composable
 fun RecipeListItem(
     recipe: PreviewRecipe,
@@ -144,6 +148,7 @@ fun RecipeListItem(
     }
 }
 
+// Function to navigate to a specific recipe
 fun navigateToRecipe(navController: NavHostController, recipeId: Int) {
     navController.navigate("recipe/$recipeId")
 }

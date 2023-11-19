@@ -35,8 +35,10 @@ fun RecipePage(
     recipeId: Int,
     viewModel: RecipesViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 )  {
+    // Fetch recipe details based on the provided recipeId
     viewModel.fetchRecipeById(recipeId)
     val scrollState = rememberScrollState()
+    // Collect recipe details from the view model
     val recipeDetails by viewModel.recipeDetails.collectAsState()
 
     Column(
@@ -63,11 +65,13 @@ fun RecipePage(
             }
 
         } ?: run {
+            // Show a loading indicator if recipeDetails is null
             CircularProgressIndicator()
         }
     }
 }
 
+// Composable function for displaying the recipe image
 @Composable
 fun RecipeImage(imageUrl: String) {
     Image(
@@ -81,6 +85,7 @@ fun RecipeImage(imageUrl: String) {
     )
 }
 
+// Composable function for displaying the recipe title
 @Composable
 fun RecipeTitle(title: String) {
     Text(
@@ -92,6 +97,7 @@ fun RecipeTitle(title: String) {
     )
 }
 
+// Composable function for displaying cooking information
 @Composable
 fun CookingInfo(
     servings: Int?,
@@ -107,6 +113,7 @@ fun CookingInfo(
     }
 }
 
+// Composable function for displaying a label with border and content
 @Composable
 fun LabelWithBorder(label: String, content: String) {
     Row(modifier = Modifier.padding(vertical = 4.dp)) {
@@ -116,6 +123,7 @@ fun LabelWithBorder(label: String, content: String) {
     }
 }
 
+// Composable function for displaying a list of ingredients
 @Composable
 fun IngredientsList(ingredients: List<Ingredient>) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -128,6 +136,7 @@ fun IngredientsList(ingredients: List<Ingredient>) {
     }
 }
 
+// Composable function for displaying recipe instructions
 @Composable
 fun Instructions(instructions: String) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -138,6 +147,7 @@ fun Instructions(instructions: String) {
     }
 }
 
+// Composable function for displaying additional details like the source URL
 @Composable
 fun AdditionalDetails(sourceUrl: String) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
