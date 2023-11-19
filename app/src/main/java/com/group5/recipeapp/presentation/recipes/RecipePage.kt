@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,6 +68,20 @@ fun RecipePage(
         } ?: run {
             // Show a loading indicator if recipeDetails is null
             CircularProgressIndicator()
+        }
+
+        // Botón para navegar hacia atrás
+        Button(
+            onClick = {
+                // Utiliza el NavHostController para navegar hacia atrás
+                navController.popBackStack()
+            },
+            modifier = Modifier
+                .width(200.dp)
+                .height(50.dp)
+                .padding(top = 16.dp)
+        ) {
+            Text("Back to List")
         }
     }
 }
