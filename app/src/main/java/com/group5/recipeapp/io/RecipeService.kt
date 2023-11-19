@@ -6,6 +6,11 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+//Este código define una interfaz RecipeService que actúa como una interfaz para
+// realizar solicitudes a una API de recetas. Está utilizando Retrofit,
+// una biblioteca de Android que facilita la comunicación con servicios web REST.
+
+
 interface RecipeService {
     @GET("recipes/complexSearch")
     suspend fun searchRecipes(
