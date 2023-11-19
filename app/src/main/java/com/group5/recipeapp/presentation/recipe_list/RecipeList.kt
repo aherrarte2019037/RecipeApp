@@ -19,7 +19,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +42,13 @@ import com.group5.recipeapp.model.PreviewRecipe
 import com.group5.recipeapp.ui.theme.Typography
 import com.group5.recipeapp.ui.theme.White
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.res.painterResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeList(
     navController: NavHostController,
@@ -54,22 +63,27 @@ fun RecipeList(
     }
 
     // Main container for the RecipeList screen
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(White)
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "$category Recipes", style = Typography.titleLarge) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp, bottom = 30.dp)
+                .background(White),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "$category Recipes",
-                style = Typography.titleLarge,
-                modifier = Modifier.padding(top = 30.dp, bottom = 5.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
             RecipeListView(recipes, listState, onRecipeClicked = { recipeId ->
                 navigateToRecipe(navController, recipeId)
             }, viewModel)
